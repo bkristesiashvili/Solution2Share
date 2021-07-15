@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using Solution2Share.Models;
+using Solution2Share.Service;
 
 using System;
 using System.Collections.Generic;
@@ -20,11 +22,13 @@ namespace Solution2Share.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();

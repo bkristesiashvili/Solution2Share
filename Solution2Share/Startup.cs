@@ -1,14 +1,20 @@
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Solution2Share.Data;
+using Solution2Share.Data.Entities;
+using Solution2Share.Extensions;
+using Solution2Share.Service;
 
 namespace Solution2Share
 {
@@ -24,7 +30,34 @@ namespace Solution2Share
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApp(Configuration)
+                .EnableTokenAcquisitionToCallDownstreamApi(options =>
+                {
+                    Configuration.Bind("AzureAd", options);
+                }, GraphScopes.Scopes)
+                .AddInMemoryTokenCaches();
+
+            services.AddGraphOptions(Configuration);
+
             services.AddControllersWithViews();
+
+            services.AddDbContext<Solution2ShareDbContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("task"), 
+                    migration => migration.MigrationsAssembly("Solution2Share.Data"));
+            });
+
+            services.AddIdentity<User, Role>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+                .AddEntityFrameworkStores<Solution2ShareDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +78,7 @@ namespace Solution2Share
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

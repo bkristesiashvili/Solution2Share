@@ -1,0 +1,27 @@
+﻿<ul class="nav navbar-nav">
+    @if (User.Identity.IsAuthenticated)
+    {
+    <li class="nav-item">
+        <div class="dropdown">
+            <button class="btn btn-sm text-light mt-2 naviblue-menu dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="text-13px">abcd</span>
+            </button>
+            <div class="dropdown-menu text-12px text-center" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">პროფილი</a>
+                
+                <div class="text-center">
+                    <a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut" class="btn btn-sm btn-danger">
+                        <i class="fas fa-sign-out-alt">&nbsp;</i>გასვლა
+                    </a>
+                </div>
+            </div>
+        </div>
+    </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="account" asp-action="index">Sign in</a>
+        </li>
+    }
+</ul>
