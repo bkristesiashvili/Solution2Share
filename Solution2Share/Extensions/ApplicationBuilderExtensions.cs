@@ -13,9 +13,18 @@ namespace Solution2Share.Extensions
     {
         #region EXTENSION METHODS
 
-        public static IApplicationBuilder UseRegisterMicrosoftUser(this IApplicationBuilder builder, 
-            string comppleteRegisterLocation)
-            => builder.UseMiddleware<RegisterMicrosoftUserMiddleware>(new[] { comppleteRegisterLocation });
+        public static IApplicationBuilder UseRegisterMicrosoftUser(this IApplicationBuilder builder,
+            Action<RedirectOptions> action)
+        {
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+
+            RedirectOptions option = new RedirectOptions();
+
+            action.Invoke(option);
+
+           return builder.UseMiddleware<RegisterMicrosoftUserMiddleware>(new[] { option });
+        }
 
         #endregion
     }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 using Solution2Share.Data;
 using Solution2Share.Extensions;
@@ -18,6 +19,7 @@ using Solution2Share.Service;
 using Solution2Share.Service.Extensions;
 
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace Solution2Share
 {
@@ -34,7 +36,32 @@ namespace Solution2Share
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApp(Configuration)
+                .AddMicrosoftIdentityWebApp(options =>
+                {
+                    Configuration.Bind("AzureAD", options);
+
+                    options.Events.OnAuthenticationFailed = context =>
+                    {
+                        context.Response
+                               .Redirect($"/home/error");
+                        
+                        context.HandleResponse();
+
+                        return Task.FromResult(0);
+                    };
+
+                    options.Events.OnRemoteFailure = context =>
+                    {
+                        if (context.Failure is OpenIdConnectProtocolException)
+                        {
+                            context.Response
+                                .Redirect($"/home/error");
+                            context.HandleResponse();
+                        }
+
+                        return Task.FromResult(0);
+                    };
+                })
                 .EnableTokenAcquisitionToCallDownstreamApi(options =>
                 {
                     Configuration.Bind("AzureAd", options);
@@ -81,7 +108,11 @@ namespace Solution2Share
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseRegisterMicrosoftUser("/home/complete");
+            app.UseRegisterMicrosoftUser(options =>
+            {
+                options.ErrorHandlerUrl = "/home/error";
+                options.RegisterCompletionUrl = "/home/complete";
+            });
 
             app.UseEndpoints(endpoints =>
             {

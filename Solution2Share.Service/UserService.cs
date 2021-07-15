@@ -77,14 +77,18 @@ namespace Solution2Share.Service
                     throw new InvalidOperationException();
             }
 
+            ContextAccessor.HttpContext.User.AddUserId(existed.Id);
+
             IsCompletedAccount = existed != null && existed.IsActive;
         }
 
-        public async Task CompleteRegistration(Guid existedUser, string company, 
+        public async Task CompleteRegistration(string company, 
             string department, string roleName)
         {
+            var user = ContextAccessor.HttpContext.User;
+
             var existed = await DbContext.MicrosoftUsers
-                .Where(user => user.Id.Equals(existedUser))
+                .Where(user => user.Email.Equals(user.Email))
                 .SingleOrDefaultAsync();
 
             if (existed == null) return;

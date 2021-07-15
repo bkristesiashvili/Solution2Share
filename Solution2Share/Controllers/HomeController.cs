@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -6,6 +7,7 @@ using Microsoft.Identity.Web;
 
 using Solution2Share.Models;
 using Solution2Share.Service;
+using Solution2Share.Service.Extensions;
 
 using System;
 using System.Collections.Generic;
@@ -37,6 +39,7 @@ namespace Solution2Share.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
@@ -48,12 +51,15 @@ namespace Solution2Share.Controllers
             return View();
         }
 
+        [AuthorizeForScopes(Scopes = new[] {"User.Read.All" })]
         public async Task<IActionResult> Complete()
         {
-            var u = User.Claims.ToList();
-           // var me = await _client.Me.Request().GetAsync();
+            var me = await _client.Me.Request().GetAsync();
 
-            return Ok();
+            await _userService
+                .CompleteRegistration(string.Empty, string.Empty, string.Empty);
+
+            return Redirect(nameof(Index));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

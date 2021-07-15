@@ -26,6 +26,20 @@ namespace Solution2Share.Service.Extensions
             return tenantId;
         }
 
+        public static Guid GetUserId(this ClaimsPrincipal claimsPrincipal)
+        {
+            var tid = claimsPrincipal.FindFirstValue(GraphClaimTypes.UserId);
+            Guid.TryParse(tid, out var userId);
+            return userId;
+        }
+
+        public static void AddUserId(this ClaimsPrincipal claimsPrincipal, Guid id)
+        {
+            var identity = claimsPrincipal.Identity as ClaimsIdentity;
+
+            identity.AddClaim(new Claim(GraphClaimTypes.UserId, id.ToString()));
+        }
+
         #endregion
     }
 }

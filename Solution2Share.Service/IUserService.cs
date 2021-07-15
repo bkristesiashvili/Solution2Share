@@ -24,7 +24,7 @@ namespace Solution2Share.Service
 
         Task RegistereNewUser();
 
-        Task CompleteRegistration(Guid existedUser, string company,
+        Task CompleteRegistration(string company,
             string department, string roleName);
 
         #endregion

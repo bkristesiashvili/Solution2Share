@@ -15,16 +15,16 @@ namespace Solution2Share.Middlewares
         #region PRIVATE FIELDS
 
         private readonly RequestDelegate _next;
-        private readonly string _completeRegistration;
+        private readonly RedirectOptions _redirectUrls;
 
         #endregion
 
         #region CTOR
 
-        public RegisterMicrosoftUserMiddleware(RequestDelegate next, string completeRegister)
+        public RegisterMicrosoftUserMiddleware(RequestDelegate next, RedirectOptions options)
         {
             _next = next;
-            _completeRegistration = completeRegister;
+            _redirectUrls = options;
         }
 
         #endregion
@@ -35,7 +35,13 @@ namespace Solution2Share.Middlewares
         {
             var path = httpContext.Request.Path;
 
-            if (path == _completeRegistration)
+            if (path == _redirectUrls.RegisterCompletionUrl)
+            {
+                await _next(httpContext);
+                return;
+            }
+
+            if(path == _redirectUrls.ErrorHandlerUrl)
             {
                 await _next(httpContext);
                 return;
@@ -49,7 +55,7 @@ namespace Solution2Share.Middlewares
             if (userService.IsCompletedAccount)
                 await _next(httpContext);
             else
-                httpContext.Response.Redirect(_completeRegistration);
+                httpContext.Response.Redirect(_redirectUrls.RegisterCompletionUrl);
         }
 
         #endregion
