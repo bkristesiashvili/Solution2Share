@@ -26,14 +26,6 @@ namespace Solution2Share.Service.Extensions
             return tenantId;
         }
 
-        public static void AddGraphClaims(this ClaimsPrincipal claimsPrincipal, User user)
-        {
-            var identity = claimsPrincipal.Identity as ClaimsIdentity;
-
-            identity.AddClaim(new Claim(GraphClaimTypes.Company,
-                user.CompanyName));
-        }
-
         #endregion
     }
 }

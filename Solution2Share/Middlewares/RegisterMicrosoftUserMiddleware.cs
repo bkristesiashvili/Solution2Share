@@ -29,25 +29,29 @@ namespace Solution2Share.Middlewares
 
         #endregion
 
+        #region PUBLIC METHODS
+
         public async Task Invoke(HttpContext httpContext)
         {
-            var userService = httpContext.RequestServices
-                .GetService(typeof(IUserService)) as IUserService;
-
-            await userService.RegistereNewUser();
-
             var path = httpContext.Request.Path;
 
-            if(path == _completeRegistration)
+            if (path == _completeRegistration)
             {
                 await _next(httpContext);
                 return;
             }
+
+            var userService = httpContext.RequestServices
+                .GetService(typeof(IUserService)) as IUserService;
+
+            await userService.RegistereNewUser();
 
             if (userService.IsCompletedAccount)
                 await _next(httpContext);
             else
                 httpContext.Response.Redirect(_completeRegistration);
         }
+
+        #endregion
     }
 }
