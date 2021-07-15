@@ -8,13 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 
 using Solution2Share.Data;
-using Solution2Share.Data.Entities;
 using Solution2Share.Extensions;
 using Solution2Share.Service;
+using Solution2Share.Service.Extensions;
+
+using System.Net.Http.Headers;
 
 namespace Solution2Share
 {
@@ -36,27 +39,24 @@ namespace Solution2Share
                 {
                     Configuration.Bind("AzureAd", options);
                 }, GraphScopes.Scopes)
+                .AddMicrosoftGraph(option =>
+                {
+                    option.Scopes = string.Join(' ', GraphScopes.Scopes);
+                })
                 .AddInMemoryTokenCaches();
 
             services.AddGraphOptions(Configuration);
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddMicrosoftIdentityUI();
 
             services.AddDbContext<Solution2ShareDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("task"), 
-                    migration => migration.MigrationsAssembly("Solution2Share.Data"));
+                options.UseSqlServer(Configuration.GetConnectionString("task")
+                    , migration => migration.MigrationsAssembly("Solution2Share.Data"));
             });
 
-            services.AddIdentity<User, Role>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-            })
-                .AddEntityFrameworkStores<Solution2ShareDbContext>()
-                .AddDefaultTokenProviders();
-
+            services.AddHttpContextAccessor();
             services.AddScoped<IUserService, UserService>();
         }
 
@@ -80,6 +80,8 @@ namespace Solution2Share
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseRegisterMicrosoftUser("/home/complete");
 
             app.UseEndpoints(endpoints =>
             {

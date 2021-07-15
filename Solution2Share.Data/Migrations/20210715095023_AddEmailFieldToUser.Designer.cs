@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Solution2Share.Data;
 
 namespace Solution2Share.Data.Migrations
 {
     [DbContext(typeof(Solution2ShareDbContext))]
-    partial class Solution2ShareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210715095023_AddEmailFieldToUser")]
+    partial class AddEmailFieldToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,11 +41,6 @@ namespace Solution2Share.Data.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("RegisteredAt")
                         .ValueGeneratedOnAdd()

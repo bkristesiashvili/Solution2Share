@@ -3,8 +3,8 @@
     {
     <li class="nav-item">
         <div class="dropdown">
-            <button class="btn btn-sm text-light mt-2 naviblue-menu dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="text-13px">abcd</span>
+            <button class="btn btn-sm text-white mt-2 naviblue-menu dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="text-13px">@User.Identity.Name</span>
             </button>
             <div class="dropdown-menu text-12px text-center" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item" href="#">პროფილი</a>
@@ -21,7 +21,7 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link" asp-controller="account" asp-action="index">Sign in</a>
+            <a class="nav-link text-white" asp-area="microsoftidentity" asp-controller="account" asp-action="signin">Sign in</a>
         </li>
     }
 </ul>

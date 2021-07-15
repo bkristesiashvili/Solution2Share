@@ -13,6 +13,8 @@ namespace Solution2Share.Service
         public readonly static string[] Scopes =
         {
             "User.Read",
+            "Organization.Read.All",
+            "Directory.Read.All",
             "MailboxSettings.Read",
             "Calendars.ReadWrite"
         };
