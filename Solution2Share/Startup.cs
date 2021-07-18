@@ -72,8 +72,6 @@ namespace Solution2Share
                 })
                 .AddInMemoryTokenCaches();
 
-            services.AddGraphOptions(Configuration);
-
             services.AddControllersWithViews()
                 .AddMicrosoftIdentityUI();
 

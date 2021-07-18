@@ -21,20 +21,14 @@ namespace Solution2Share.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUserService _userService;
-        private readonly GraphOption _option;
-        private readonly ITokenAcquisition _accessTokenAcq;
         private readonly GraphServiceClient _client;
 
         public HomeController(ILogger<HomeController> logger,
             IUserService userService,
-            ITokenAcquisition token,
-            IOptions<GraphOption> optionValue,
             GraphServiceClient client)
         {
             _logger = logger;
             _userService = userService;
-            _option = optionValue.Value;
-            _accessTokenAcq = token;
             _client = client;
         }
 
