@@ -40,9 +40,10 @@ namespace Solution2Share.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var users = await _userService.GetAllUsers();
+            return View(users);
         }
 
         [HttpGet]
@@ -51,13 +52,16 @@ namespace Solution2Share.Controllers
             return View();
         }
 
-        [AuthorizeForScopes(Scopes = new[] {"User.Read.All" })]
+        [AuthorizeForScopes(Scopes = new[] {"User.Read.All"})]
         public async Task<IActionResult> Complete()
         {
-            var me = await _client.Me.Request().GetAsync();
+            var me = await _client
+                .Me
+                .Request()
+                .GetAsync();
 
             await _userService
-                .CompleteRegistration(string.Empty, string.Empty, string.Empty);
+                .CompleteRegistration(me.CompanyName, me.Department, string.Empty);
 
             return Redirect(nameof(Index));
         }

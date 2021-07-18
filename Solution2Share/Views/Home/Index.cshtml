@@ -1,8 +1,35 @@
-﻿@{
+﻿@model IEnumerable<Solution2Share.Data.Entities.MicrosoftUser>
+@{
     ViewData["Title"] = "Home Page";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@if (User.Identity.IsAuthenticated)
+{
+<div class="container">
+    <div class="text-center">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-sm-3 col-md-3 col-lg-3">
+                    @item.DisplayName
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3">
+                    @item.Department
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3">
+                    @item.CompanyName
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3">
+                    @item.Email
+                </div>
+            }
+        </div>
+    </div>
 </div>
+}
+else
+{
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    </div>
+}

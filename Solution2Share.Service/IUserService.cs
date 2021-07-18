@@ -1,6 +1,7 @@
 ﻿using Microsoft.Identity.Web;
 
 using Solution2Share.Data;
+using Solution2Share.Data.Entities;
 
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace Solution2Share.Service
 
         Task CompleteRegistration(string company,
             string department, string roleName);
+
+        Task<IEnumerable<MicrosoftUser>> GetAllUsers();
 
         #endregion
     }

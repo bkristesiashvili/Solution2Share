@@ -93,6 +93,16 @@ namespace Solution2Share.Service
 
             if (existed == null) return;
 
+            if (string.IsNullOrWhiteSpace(company))
+                company = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(department))
+                department = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(roleName))
+                roleName = string.Empty;
+
+
             existed.CompanyName = company;
             existed.Department = department;
             existed.RoleName = roleName;
@@ -100,6 +110,18 @@ namespace Solution2Share.Service
 
             DbContext.MicrosoftUsers.Update(existed);
             await DbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<MicrosoftUser>> GetAllUsers()
+        {
+            var tenantId = ContextAccessor
+                .HttpContext
+                .User
+                .GetUserGraphTenant();
+
+            return await (from user in DbContext.MicrosoftUsers
+                   where user.TenantId == tenantId
+                   select user).ToListAsync();
         }
 
         #endregion
