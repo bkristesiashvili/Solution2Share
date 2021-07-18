@@ -85,10 +85,10 @@ namespace Solution2Share.Service
         public async Task CompleteRegistration(string company, 
             string department, string roleName)
         {
-            var user = ContextAccessor.HttpContext.User;
+            var contextUser = ContextAccessor.HttpContext.User;
 
             var existed = await DbContext.MicrosoftUsers
-                .Where(user => user.Email.Equals(user.Email))
+                .Where(user => user.Email.Equals(contextUser.Email))
                 .SingleOrDefaultAsync();
 
             if (existed == null) return;
